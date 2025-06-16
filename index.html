@@ -2,18 +2,96 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Dream AR</title> 
-    <script type="importmap">
-        {
-          "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@<0.176.0>/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@<0.176.0>/examples/jsm/"
-          }
-        }
-</script>
-  </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Cloud Anchors Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@google/model-viewer@1.8.0/dist/model-viewer.min.js"></script>
+    <script src="https://unpkg.com/@google-web-components/google-arcore@1.0.1/dist/ar.js"></script>
+</head>
 <body>
-    <script type="module" src="script.js"></script>     
+    <!-- Container für die AR Szene -->
+    <div id="ar-container" style="width: 100%; height: 100vh;"></div>
+
+    <script>
+        // Ihr API-Schlüssel
+        const API_KEY = 'AIzaSyD2WRK2wBX0HLUhjFHbUx2E3mAbtw98AoI';
+        
+        // Cloud Anchor ID (wenn Sie einen bestehenden Anchor laden möchten)
+        const CLOUD_ANCHOR_ID = null; // oder "IHR_ANCHOR_ID_HIER"
+
+        async function initAR() {
+            // Prüfen auf WebXR Unterstützung
+            if (!navigator.xr) {
+                alert('WebXR wird von Ihrem Browser nicht unterstützt');
+                return;
+            }
+
+            // ARCore für Web initialisieren
+            const ar = new AR.ARView({
+                apiKey: API_KEY,
+                shouldCreateAnchors: true,
+                shouldResolveAnchors: true
+            });
+
+            // AR-Szene erstellen
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('ar-container').appendChild(renderer.domElement);
+
+            // AR-Sitzung starten
+            try {
+                await ar.start({
+                    outputCanvas: renderer.domElement,
+                    camera: camera
+                });
+
+                // Cloud Anchor erstellen oder laden
+                if (CLOUD_ANCHOR_ID) {
+                    // Vorhandenen Anchor laden
+                    const anchor = await ar.resolveCloudAnchor(CLOUD_ANCHOR_ID);
+                    // 3D-Objekt an Anchor-Position hinzufügen
+                    addObjectAtAnchor(scene, anchor);
+                } else {
+                    // Neuen Anchor erstellen
+                    ar.onAnchorCreated = (anchor) => {
+                        // Anchor-ID speichern (für spätere Verwendung)
+                        console.log('Cloud Anchor erstellt mit ID:', anchor.cloudAnchorId);
+                        // 3D-Objekt hinzufügen
+                        addObjectAtAnchor(scene, anchor);
+                    };
+                }
+
+                // Render-Loop
+                function animate() {
+                    requestAnimationFrame(animate);
+                    renderer.render(scene, camera);
+                }
+                animate();
+
+            } catch (error) {
+                console.error('AR Initialisierung fehlgeschlagen:', error);
+            }
+        }
+
+        function addObjectAtAnchor(scene, anchor) {
+            // Einfaches 3D-Objekt erstellen (hier ein Würfel)
+            const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            const cube = new THREE.Mesh(geometry, material);
+            
+            // Objekt an Anchor-Position ausrichten
+            cube.position.copy(anchor.position);
+            cube.quaternion.copy(anchor.quaternion);
+            
+            scene.add(cube);
+        }
+
+        // AR initialisieren, wenn die Seite geladen ist
+        window.addEventListener('load', initAR);
+    </script>
 </body>
 </html>
