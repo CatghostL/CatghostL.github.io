@@ -21,7 +21,7 @@ async function activateXR() {
   document.body.appendChild(canvas);
   const gl = canvas.getContext("webgl", {xrCompatible: true});
 
-  const scene = new THREE.Scene();
+const scene = new THREE.Scene();
 
 // The cube will have a different color on each side.
 const materials = [
