@@ -1,3 +1,7 @@
+// Model of Portal is by: "Magic Portal" (https://skfb.ly/opoAZ) by Nick Broad is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+window.addEventListener('DOMContentLoaded', () => {
+
 // ---------------------------
 // Grundlegende Setup-Variablen
 // ---------------------------
@@ -17,18 +21,18 @@ let bitmaps = {}; // Gespeicherte Bitmap-Daten der Markerbilder
 let imageBitmapLoadFailed = false; // Fehlerstatus bei Bild-Initialisierung
 
 // 3D-Modell Setup
-let loader = new THREE.FBXLoader(); // FBX-Dateien-Loader von Three.js
+let loader = new THREE.GLTFLoader(); // GLTFLoader statt FBXLoader
 let models = new Array(4); // Platzhalter für 4 geladene Modelle
+let loadedModel = null; // das Modell wird einmal geladen und später geklont
 let includedModels = []; // Indizes der aktuell in der Szene enthaltenen Modelle
-let group; // Modellgruppe für Transformationen
 
 // Umgebungswechsel Setup
 const textureLoader = new THREE.TextureLoader(); // Texturloader für Sphären
 let sphereTextures = [           // Texturen der Umgebungen
-    "spheretexture/Bild1.jpg",
-    "spheretexture/Bild2.jpg",
-    "spheretexture/Bild3.jpg",
-    "spheretexture/Bild4.jpg"
+	"spheretexture/Bild1.webp",
+	"spheretexture/Bild2.webp",
+	"spheretexture/Bild3.webp",
+	"spheretexture/Bild4.webp"
 ];
 let spheres = [];  // Enthält alle Sphären mit Umgebungs Textur
 let modelProximityStates = [false, false, false, false]; // Nähe-Indikator pro Modell
@@ -49,42 +53,46 @@ for(let image in images){
 	createImageBitmap(img).then(x=>{
 		bitmaps[imageName] = x;
 		trackableImages[image] = {
-        	image: x,
-        	widthInMeters: 0.1  // Physikalische Markerbreit
+			image: x,
+			widthInMeters: 0.1  // Physikalische Markerbreit
 		};
 	}).catch(err => { 										 
 		console.error("createImageBitmap failed", err);
-    	imageBitmapLoadFailed = true;
+		imageBitmapLoadFailed = true;
 	});
 
+
+
 	// Modell laden, skalieren und in eine Gruppe einfügen
-	loader.load( 'fbx/monoblock_CHAIR.fbx', function (object) {
-		object.scale.set(0.0004, 0.0004, 0.0004);
-    	object.rotation.y = Math.PI; // Modell drehen
-        group = new THREE.Group();
-        group.add(object);
-		models[image] = group;  // Modell abspeichern
-	} );
-	
+   loader.load( 'gltf/scene.gltf', function (gltf) {
+	   gltf.scene.scale.set(0.15, 0.15, 0.15); // kleineres Portal
+	   gltf.scene.rotation.y = Math.PI; // Modell drehen
+	   gltf.scene.rotation.x = -Math.PI / 2; // Portal liegt flach auf Marker
+	   gltf.scene.position.set(0, 0, 0); // auf Marker platzieren
+	   group = new THREE.Group();
+	   group.add(gltf.scene);
+	   models[image] = group;  // Modell abspeichern
+   } );
+
 	// Umgebungssphäre vorbereiten und in Szene einfügen (unsichtbar)
 	textureLoader.load(
-        sphereTextures[image],
-        function (texture) {
+		sphereTextures[image],
+		function (texture) {
 			const geometry = new THREE.SphereGeometry(500, 60, 40);
-            const material = new THREE.MeshBasicMaterial({
-                map: texture,
-                side: THREE.DoubleSide,
-            });
-            const sphere = new THREE.Mesh(geometry, material);
-            sphere.rotation.y = Math.PI;
-            scene.add(sphere);
-            //sphere.layers.set(1);
-            sphere.visible = false;
-            spheres[image] = sphere;  // Sphären abspeichern
-        }
-    );
+			const material = new THREE.MeshBasicMaterial({
+				map: texture,
+				side: THREE.DoubleSide,
+			});
+			const sphere = new THREE.Mesh(geometry, material);
+			sphere.rotation.y = Math.PI;
+			scene.add(sphere);
+			//sphere.layers.set(1);
+			sphere.visible = false;
+			spheres[image] = sphere;  // Sphären abspeichern
+		}
+	);
 	
-} 
+};
 
 // ---------------------------
 // Standard XR & Scene Setup
@@ -126,25 +134,25 @@ function init() {
 
 // XR Session-Konfiguration vorbereiten
 function getXRSessionInit(mode, options) {
-  	if (options && options.referenceSpaceType) {
-  		renderer.xr.setReferenceSpaceType(options.referenceSpaceType);
-  	}
-  	var space = (options || {}).referenceSpaceType || 'local-floor';
-  	var sessionInit = (options && options.sessionInit) || {};
+	if (options && options.referenceSpaceType) {
+		renderer.xr.setReferenceSpaceType(options.referenceSpaceType);
+	}
+	var space = (options || {}).referenceSpaceType || 'local-floor';
+	var sessionInit = (options && options.sessionInit) || {};
   
-  	// Wenn der Benutzer den Speicherplatz bereits als optionales oder erforderliches Feature angegeben hat, tun Sie nichts
-  	if (sessionInit.optionalFeatures && sessionInit.optionalFeatures.includes(space))
-  		return sessionInit;
-  	//if ( sessionInit.requiredFeatures && sessionInit.requiredFeatures.includes(space) )
-  	//	return sessionInit;
+	// Wenn der Benutzer den Speicherplatz bereits als optionales oder erforderliches Feature angegeben hat, tun Sie nichts
+	if (sessionInit.optionalFeatures && sessionInit.optionalFeatures.includes(space))
+		return sessionInit;
+	//if ( sessionInit.requiredFeatures && sessionInit.requiredFeatures.includes(space) )
+	//	return sessionInit;
   
 	// Space als requiredFeature ergänzen
-  	var newInit = Object.assign({}, sessionInit);
-  	newInit.requiredFeatures = [space];
-  	if (sessionInit.requiredFeatures) {
-  		newInit.requiredFeatures = newInit.requiredFeatures.concat(sessionInit.requiredFeatures);
-  	}
-  	return newInit;
+	var newInit = Object.assign({}, sessionInit);
+	newInit.requiredFeatures = [space];
+	if (sessionInit.requiredFeatures) {
+		newInit.requiredFeatures = newInit.requiredFeatures.concat(sessionInit.requiredFeatures);
+	}
+	return newInit;
    }
 
 // ------------------------------------
@@ -163,9 +171,9 @@ function AR(){
 		button.textContent = 'EXIT AR';
 		currentSession = session;
 		session.requestReferenceSpace('local').then((refSpace) => {
-        	xrRefSpace = refSpace;
-        	session.requestAnimationFrame(onXRFrame);
-        });
+			xrRefSpace = refSpace;
+			session.requestAnimationFrame(onXRFrame);
+		});
 	}
 	
 	// AR-Session beenden
@@ -178,11 +186,11 @@ function AR(){
 	
 	// Session initialisieren oder beenden
 	if (currentSession === null) {
-        let options = {
-            requiredFeatures: ['dom-overlay','image-tracking'],
-            trackedImages: trackableImages,
-            domOverlay: {root: document.body}
-        };
+		let options = {
+			requiredFeatures: ['dom-overlay','image-tracking'],
+			trackedImages: trackableImages,
+			domOverlay: {root: document.body}
+		};
 		var sessionInit = getXRSessionInit('immersive-ar', {
 			mode: 'immersive-ar',
 			referenceSpaceType: 'local', // 'local-floor'
@@ -190,7 +198,7 @@ function AR(){
 		});
 		navigator.xr.requestSession('immersive-ar', sessionInit).then(onSessionStarted).catch(err => { 
 			console.error("Unsupported feature", err);
-    		showErrorMessage("Image-tracking konnte nicht aktiviert werden. Überprüfe, ob du 'webXR incubations' enabled hast auf chrome://flags oder versuche einen anderen Browser.");
+			showErrorMessage("Image-tracking konnte nicht aktiviert werden. Überprüfe, ob du 'webXR incubations' enabled hast auf chrome://flags oder versuche einen anderen Browser.");
 		});
 	} else {
 		currentSession.end();
@@ -214,31 +222,69 @@ function AR(){
 // ------------------------------------
 // Umgebung aktivieren/deaktivieren je nach Modellnähe
 // ------------------------------------
+function transitionToEnvironment(index, isEntering) {
+	const overlay = document.getElementById('fadeOverlay');
+
+	// Schritt 1: Schwarz einblenden
+	overlay.style.opacity = 1;
+
+	setTimeout(() => {
+		// Schritt 2: Szene umschalten
+		if (isEntering) {
+		enterEnvironment(index);
+		} else {
+			exitEnvironment(index);
+		}
+		// Schritt 3: Schwarz wieder ausblenden
+		setTimeout(() => {
+			overlay.style.opacity = 0;
+		}, 300); // leicht verzögert, damit 360-Scene geladen ist
+	}, 600); // Wartezeit für den "zu schwarz"-Effekt
+}
 
 function enterEnvironment(index){ 
+	// Alte Funktionalität auskommentiert:
+	// if (spheres[index]) {
+	// 	spheres[index].visible = true;
+	// }
+	// // Portal ausblenden, wenn Sphere sichtbar wird
+	// if (models[index]) {
+	// 	models[index].visible = false;
+	// }
+
+	// Neue Funktionalität:
 	if (spheres[index]) {
 		spheres[index].visible = true;
 	}
-	
-	// Nur das Modell mit dem übergebenen Index anzeigen 
+	// Alle Portale ausblenden
 	for (let i = 0; i < models.length; i++) {
-        if (models[i]) {
-            models[i].visible = (i === index); 
-        }
-    }
+		if (models[i].visible) {
+			models[i].visible = false;
+		}
+	}
 }
 
 function exitEnvironment(index){
+	// Alte Funktionalität auskommentiert:
+	// if (spheres[index]) {
+	// 	spheres[index].visible = false;
+	// }
+	// // Portal wieder einblenden, wenn Sphere verschwindet
+	// if (models[index]) {
+	// 	models[index].visible = true;
+	// }
+
+	// Neue Funktionalität:
 	if (spheres[index]) {
 		spheres[index].visible = false;
 	}
-	
-	// Alle Modelle wieder anzeigen
-	for (let i = 0; i < models.length; i++) {
-        if (models[i]) {
-            models[i].visible = true;
-        }
-    }
+	// Nur die getrackten Modelle wieder anzeigen
+	for (let i = 0; i < includedModels.length; i++) {
+		let modelIndex = includedModels[i];
+		if (models[modelIndex]) {
+			models[modelIndex].visible = true;
+		}
+	}
 }
 
 // ------------------------------------
@@ -246,50 +292,50 @@ function exitEnvironment(index){
 // ------------------------------------
 
 function onXRFrame(t, frame) {
-   	 const session = frame.session;
-    	session.requestAnimationFrame(onXRFrame);
-    	const baseLayer = session.renderState.baseLayer;
-    	const pose = frame.getViewerPose(xrRefSpace);
+	 const session = frame.session;
+		session.requestAnimationFrame(onXRFrame);
+		const baseLayer = session.renderState.baseLayer;
+		const pose = frame.getViewerPose(xrRefSpace);
 	render();
 
 	if (pose) {
 		for (const view of pose.views) {
-            const viewport = baseLayer.getViewport(view);
-            gl.viewport(viewport.x, viewport.y,
-                        viewport.width, viewport.height);
+			const viewport = baseLayer.getViewport(view);
+			gl.viewport(viewport.x, viewport.y,
+						viewport.width, viewport.height);
 			const results = frame.getImageTrackingResults();
 			for (const result of results) {
-			  	const imageIndex = result.index; // Der Index ist die Position des Bildes im trackedImages-Array, die bei der Sitzungserstellung angegeben wird
+				const imageIndex = result.index; // Der Index ist die Position des Bildes im trackedImages-Array, die bei der Sitzungserstellung angegeben wird
 			
-			  	// Erhalte die Pose des Bildes relativ zu einem Referenzraum.
-			 	const pose1 = frame.getPose(result.imageSpace, xrRefSpace);
-			 	var model = undefined;
-			  	var pos = pose1.transform.position;
-			  	var quat = pose1.transform.orientation;
+				// Erhalte die Pose des Bildes relativ zu einem Referenzraum.
+				const pose1 = frame.getPose(result.imageSpace, xrRefSpace);
+				var model = undefined;
+				var pos = pose1.transform.position;
+				var quat = pose1.transform.orientation;
 
 				// Positionier Modell mit dem selben Index auf dem Marker
-			   	if( !includedModels.includes(imageIndex) ){
+				if( !includedModels.includes(imageIndex) ){
 					let posi = poseToArray(pos);
 					includedModels.push(imageIndex);
 					model = models[imageIndex];
-			  		scene.add(model);
-			  	}
+					scene.add(model);
+				}
 				else{
 					model = models[imageIndex];
-			  	}
+				}
 
 				// Marker tracking state
-			  	const state = result.trackingState;
-			  	if (state == "tracked") {
+				const state = result.trackingState;
+				if (state == "tracked") {
 					let posi = poseToArray(pos);
 					let index = includedModels.indexOf(imageIndex);
 					model.position.copy( pos.toJSON());
 					model.quaternion.copy(quat.toJSON());
-			  	}
+				}
 				else if (state == "emulated") {}
 			}
-       	}
-    }
+		}
+	}
 
 	// Nähe zur Kamera überprüfen und Umgebung wechseln
 	let xrCamera = renderer.xr.getCamera(camera);
@@ -306,11 +352,11 @@ function onXRFrame(t, frame) {
 			
 			if (isClose && !modelProximityStates[modelIndex]) {
 				modelProximityStates[modelIndex] = true;
-				enterEnvironment(modelIndex);
+				transitionToEnvironment(modelIndex, true);
 			}
 			else if (!isClose && modelProximityStates[modelIndex]) {
 				modelProximityStates[modelIndex] = false;
-				exitEnvironment(modelIndex);
+				transitionToEnvironment(modelIndex, false);
 			}
 		}
 	}
@@ -339,42 +385,43 @@ const button = document.createElement('button');
 button.id = 'ArButton';
 button.textContent = 'ENTER AR' ;
 button.style.cssText+= `position: absolute;top:80%;left:40%;width:20%;height:2rem;`;
-    
+	
 document.body.appendChild(button);
 document.getElementById('ArButton').addEventListener('click',x=> {
 	if (imageBitmapLoadFailed) {
-        showErrorMessage("UPS! Beim Laden ist etwas falsch gelaufen. Überprüfe, ob du 'webXR incubations' enabled hast auf chrome://flags und Lade die Seite neu.");
-        return;
-    }
+		showErrorMessage("UPS! Beim Laden ist etwas falsch gelaufen. Überprüfe, ob du 'webXR incubations' enabled hast auf chrome://flags und Lade die Seite neu.");
+		return;
+	}
 	 AR();
 });
+
 
 // ---------------------------
 // Fehleranzeige bei Problemen
 // ---------------------------
 
 function showErrorMessage(msg) {
-    let errorDiv = document.getElementById('errorMsg');
-    if (!errorDiv) {
-        errorDiv = document.createElement('div');
-        errorDiv.id = 'errorMsg';
-        errorDiv.style.cssText = `
-            position: absolute;
-            top: 20%;
-            left: 30%;
-            width: 40%;
-            background: rgba(206, 43, 43, 0.55);
-            color: white;
-            text-align: center;
-            padding: 1rem;
-            border-radius: 1rem;
-            font-weight: bold;
-            font-size: 1.2rem;
-            z-index: 9999;
-        `;
-        document.body.appendChild(errorDiv);
-    }
-    errorDiv.textContent = msg;
+	let errorDiv = document.getElementById('errorMsg');
+	if (!errorDiv) {
+		errorDiv = document.createElement('div');
+		errorDiv.id = 'errorMsg';
+		errorDiv.style.cssText = `
+			position: absolute;
+			top: 20%;
+			left: 30%;
+			width: 40%;
+			background: rgba(206, 43, 43, 0.55);
+			color: white;
+			text-align: center;
+			padding: 1rem;
+			border-radius: 1rem;
+			font-weight: bold;
+			font-size: 1.2rem;
+			z-index: 9999;
+		`;
+		document.body.appendChild(errorDiv);
+	}
+	errorDiv.textContent = msg;
 }
 
 // ---------------------------
@@ -383,3 +430,4 @@ function showErrorMessage(msg) {
 
 init();
 render();
+});
