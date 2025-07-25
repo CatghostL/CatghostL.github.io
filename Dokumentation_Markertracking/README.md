@@ -27,7 +27,7 @@ Um die geeignetste Technologie für das Projekt zu finden, wurden verschiedene F
 
 ### Überblick: Verfügbare Technologien
 
-![Bild-Titel](link) 
+![Bild-Titel](https://raw.githubusercontent.com/CatghostL/CatghostL.github.io/refs/heads/ausbesserung/Dokumentation_Markertracking/Verf%C3%BCgbareTechnologien_Tabelle.png) 
 
 ### AR.js Test
 Aufgrund der Kostenpflichtigkeit bei 8th Wall und Zapworks wurden diese direkt ausgeschlossen. Zwischen denen zwei verbleibenden Technologien, WebXR Image Tracking und AR.js, wäre AR.js die bevorzugte Wahl, da es auf einer Größeren Anzahl von Browsern funktioniert, keine bestimmten flags oder permissions benötigt und einfacher zum einsteigen ist. Bezogen auf die Anforderungen des Projekts war noch unklar ob AR.js Funktionen, wie die feste Platzierung eines Objekts im Raum um permanente Marker nicht zu benötigen, erfüllen kann. In Bezug auf WebXR konnte die Möglichkeit die Anforderungen umzusetzen gewährleistet werden durch eine Beispiel Anwendung, die diese Funktionen implementiert hat. Da WebXR jedoch die zweite Wahl ist nach AR.js wurde zuerst getestet ob diese Funktionen in AR.js umgesetzt werden können, bevor es ausgeschlossen wurde.
