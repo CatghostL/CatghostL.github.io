@@ -26,7 +26,8 @@ Dieses Projekt ist im Zusammenspiel mit einer Spieldemo entstanden, damit diese 
 Um die geeignetste Technologie für das Projekt zu finden, wurden verschiedene Frameworks untersucht und teilweise getestet.
 
 ### Überblick: Verfügbare Technologien
-# Tabelle
+
+![Bild-Titel](link) 
 
 ### AR.js Test
 Aufgrund der Kostenpflichtigkeit bei 8th Wall und Zapworks wurden diese direkt ausgeschlossen. Zwischen denen zwei verbleibenden Technologien, WebXR Image Tracking und AR.js, wäre AR.js die bevorzugte Wahl, da es auf einer Größeren Anzahl von Browsern funktioniert, keine bestimmten flags oder permissions benötigt und einfacher zum einsteigen ist. Bezogen auf die Anforderungen des Projekts war noch unklar ob AR.js Funktionen, wie die feste Platzierung eines Objekts im Raum um permanente Marker nicht zu benötigen, erfüllen kann. In Bezug auf WebXR konnte die Möglichkeit die Anforderungen umzusetzen gewährleistet werden durch eine Beispiel Anwendung, die diese Funktionen implementiert hat. Da WebXR jedoch die zweite Wahl ist nach AR.js wurde zuerst getestet ob diese Funktionen in AR.js umgesetzt werden können, bevor es ausgeschlossen wurde.
@@ -121,6 +122,29 @@ FOR modele
     ENDIF
 ENDFOR
 ```
+## Marker auswahl
+Die auswahl der Marker wurde aus dem Concept Art für The Dream gewählt. Dadurch konnten die Marker einfach in der Gestalltung des Ausstelungsraum eingebunden werden. Weil in der AR Anwendung verschiedene Umgebungen gezeigt werden, wurden passende Bilder aus denen Conecpt Bildern gewählt, die diese Umgebungen veranschaulichen.
+
+### Marker 1
+![Fliegender Berg](https://github.com/CatghostL/CatghostL.github.io/blob/ausbesserung/marker/Fliegender%20Berg.jpg)
+### Umgebung 1
+![Umgebung1](https://raw.githubusercontent.com/CatghostL/CatghostL.github.io/refs/heads/ausbesserung/spheretexture/Bild3.webp)
+
+### Marker 2
+![Game Urban Enviroment Detail Example](https://raw.githubusercontent.com/CatghostL/CatghostL.github.io/refs/heads/ausbesserung/marker/Game%20Urban%20Enviroment%20Detail%20Example.jpg)
+### Umgebung 2
+![Umgebung2](https://raw.githubusercontent.com/CatghostL/CatghostL.github.io/refs/heads/ausbesserung/spheretexture/Bild2.webp)
+
+### Marker 3
+![marker/Fliegender Berg.jpg](https://raw.githubusercontent.com/CatghostL/CatghostL.github.io/refs/heads/ausbesserung/marker/Solar%20Paradis%20Start%20Player.jpg)
+### Umgebung 3
+![Umgebung3](https://raw.githubusercontent.com/CatghostL/CatghostL.github.io/refs/heads/ausbesserung/spheretexture/Bild4.webp)
+
+### Marker 4
+![marker/Fliegender Berg.jpg](https://raw.githubusercontent.com/CatghostL/CatghostL.github.io/refs/heads/ausbesserung/marker/Solar%20Punk%20Enviroment%20Detail.jpg)
+### Umgebung 4
+![Umgebung4](https://raw.githubusercontent.com/CatghostL/CatghostL.github.io/refs/heads/ausbesserung/spheretexture/Bild1.webp)
+
 ## Links
 <a href="https://catghostl.github.io/"> The Dream AR </a>
 
