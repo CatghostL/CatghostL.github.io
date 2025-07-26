@@ -148,4 +148,5 @@ Die auswahl der Marker wurde aus dem Concept Art für The Dream gewählt. Dadurc
 ## Links
 <a href="https://catghostl.github.io/"> The Dream AR </a>
 
-<a href="https://www.linkedin.com/in/viktoria-silchenko-43937a299/"> LinkedIn Profil </a>
+Kotak: <a href="https://www.linkedin.com/in/viktoria-silchenko-43937a299/"> LinkedIn </a>
+
