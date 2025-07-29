@@ -1,19 +1,47 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Dream AR</title> 
-    <script type="importmap">
-        {
-          "imports": {
-            "three": "https://unpkg.com/three@0.178.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.178.0/examples/jsm/"
-          }
-        }
-</script>
+	<meta charset="UTF-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<title>The Dream AR</title> 
+   	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/fflate@0.7.3/umd/index.min.js"></script>
+	<script src="https://unpkg.com/three@0.126.0/examples/js/loaders/FBXLoader.js"></script>
+	<script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
+
+	<style type="text/css">
+        	@import url(https://fonts.googleapis.com/css?family=Quicksand);
+		body .dg.main .close-button {
+            		background-color: rgba(0, 0, 0, 0.5);
+        	}
+        	body {
+            		background-color: black;
+        	}
+		#fadeOverlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background-color: black;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 1s ease;
+		z-index: 9999;
+		}
+   	 </style>
   </head>
 <body>
-    <script type="module" src="script.js"></script>     
+
+	<img id='enviroment1' style='display:none;' src = "marker/Solar Punk Enviroment Detail.jpg">
+	<img id='enviroment2' style='display:none;' src = "marker/Game Urban Enviroment Detail Example.jpg">
+	<img id='enviroment3' style='display:none;' src = "marker/Fliegender Berg.jpg">
+	<img id='enviroment4' style='display:none;' src = "marker/Solar Paradis Start Player.jpg">
+    <div id="fadeOverlay"></div>	
+	<script src="script.js"></script>     
 </body>
 </html>
+
+
+		
+
