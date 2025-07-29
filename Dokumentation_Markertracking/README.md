@@ -147,7 +147,7 @@ Die auswahl der Marker wurde aus dem Concept Art für The Dream gewählt. Dadurc
 ### Umgebung 4
 ![Umgebung4](https://raw.githubusercontent.com/CatghostL/CatghostL.github.io/refs/heads/main/spheretexture/Bild3.webp)
 
-## Kontakt
+## Kontaktinformationen
 
 Email: silchenko.viki@gmail.com
 
