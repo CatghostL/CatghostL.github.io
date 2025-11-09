@@ -4,7 +4,7 @@ Dieses Projekt ist im Zusammenspiel mit einer Spieldemo entstanden, damit diese 
 AR Demo: <a href="https://catghostl.github.io/"> The Dream AR </a>
 
 ## Funktionsweise/Anleitung
-1) Öffne die URL brave://flags/ und suche nach „WebXR Incubation”. Schalte die Option auf „Enabled”.
+1) Öffne die URL chrome://flags/ und suche nach „WebXR Incubation”. Schalte die Option auf „Enabled”.
 2) Die Webseite (URL: https://catghostl.github.io/) öffnen.
 3) Auf „Enter AR” drücken, um AR zu starten (es kann sein, dass man nach dem Kamerazugriff gefragt wird. Dies sollte für die Sitzung akzeptiert werden).
 4) Kamera auf Marker richten. Sobald der Marker erkannt wurde, sollte das Portal sofort erscheinen. Jeder Marker muss einzeln einmal erfasst werden.
